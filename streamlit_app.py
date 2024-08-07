@@ -110,11 +110,11 @@ def main():
         # Draw text labels to the side of the nodes
         for key, value in pos.items():
             x, y = value[0], value[1]
-            ax.text(x, y, s=key, bbox=dict(facecolor='skyblue', alpha=0.5), horizontalalignment='left')
+            ax.text(x + 0.02, y, s=key, bbox=dict(facecolor='skyblue', alpha=0.5), horizontalalignment='left', font_size=12, font_color='black')
 
-        # Add legend
-        legend_elements = [Patch(facecolor='skyblue', edgecolor='k', label='Place (circle)'),
-                           Patch(facecolor='skyblue', edgecolor='k', label='Transition (square)')]
+        # Add legend with clear symbols
+        legend_elements = [Patch(facecolor='skyblue', edgecolor='k', label='Place (circle)', linestyle='-'),
+                           Patch(facecolor='skyblue', edgecolor='k', label='Transition (square)', linestyle='--')]
         ax.legend(handles=legend_elements, loc='upper left')
 
         st.pyplot(fig)
