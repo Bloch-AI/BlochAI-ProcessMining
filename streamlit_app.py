@@ -5,7 +5,6 @@ import matplotlib.pyplot as plt
 from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
-from pm4py.statistics.traces.generic.log import case_statistics
 from pm4py.objects.conversion.process_tree import converter as pt_converter
 from pm4py.objects.log.obj import EventLog
 
@@ -94,15 +93,15 @@ def main():
         for arc in net.arcs:
             G.add_edge(arc.source.name, arc.target.name)
 
-        # Draw the graph
-        fig, ax = plt.subplots(figsize=(12, 8))
-        pos = nx.spring_layout(G)
+        # Draw the graph with a different layout
+        fig, ax = plt.subplots(figsize=(14, 10))
+        pos = nx.kamada_kawai_layout(G)  # Use Kamada-Kawai layout for better spacing
         node_shapes = nx.get_node_attributes(G, 'shape')
         node_labels = nx.get_node_attributes(G, 'label')
 
-        nx.draw(G, pos, with_labels=False, node_size=5000, node_color='skyblue', ax=ax)
-        nx.draw_networkx_labels(G, pos, labels={n: n for n in node_shapes if node_shapes[n] == 'circle'}, font_size=10)
-        nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10)
+        nx.draw(G, pos, with_labels=False, node_size=5000, node_color='skyblue', ax=ax, edge_color='gray', linewidths=0.5, font_size=10)
+        nx.draw_networkx_labels(G, pos, labels={n: n for n in node_shapes if node_shapes[n] == 'circle'}, font_size=12, font_weight='bold')
+        nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_weight='bold')
         nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'circle'], node_shape='o')
         nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'box'], node_shape='s')
 
