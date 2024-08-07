@@ -18,7 +18,7 @@ def main():
 
     if uploaded_file is not None:
         # Set Graphviz PATH if necessary
-        graphviz_path = '/usr/bin'  # Update this to the correct path on your system
+        graphviz_path = '/usr/bin'  # Update this to the correct path on your system if needed
         os.environ["PATH"] += os.pathsep + graphviz_path
 
         # Load data with explicit encoding (e.g., 'utf-8')
