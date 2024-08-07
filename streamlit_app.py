@@ -93,9 +93,9 @@ def main():
         for arc in net.arcs:
             G.add_edge(arc.source.name, arc.target.name)
 
-        # Draw the graph with a different layout
+        # Draw the graph with improved spacing
         fig, ax = plt.subplots(figsize=(14, 10))
-        pos = nx.kamada_kawai_layout(G)  # Use Kamada-Kawai layout for better spacing
+        pos = nx.spring_layout(G, k=0.5, iterations=100)  # Adjusted spring layout parameters
         node_shapes = nx.get_node_attributes(G, 'shape')
         node_labels = nx.get_node_attributes(G, 'label')
 
