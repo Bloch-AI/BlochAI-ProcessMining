@@ -7,6 +7,7 @@ from pm4py.objects.log.util import dataframe_utils
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.traces.generic.log import case_statistics
 from pm4py.visualization.process_tree import visualizer as pt_visualizer
+import tempfile
 
 def main():
     st.title("Process Mining App")
@@ -71,9 +72,15 @@ def main():
             st.error(f"Error during process mining: {e}")
             return
 
-        # Visualize Process Tree
-        gviz = pt_visualizer.apply(tree)
-        pt_visualizer.view(gviz)
+        # Visualize Process Tree within Streamlit
+        try:
+            gviz = pt_visualizer.apply(tree)
+            with tempfile.NamedTemporaryFile(delete=False, suffix='.svg') as f:
+                pt_visualizer.save(gviz, f.name)
+                st.image(f.name)
+        except Exception as e:
+            st.error(f"Error during process tree visualization: {e}")
+            return
 
         # Summary Statistics
         st.subheader("Summary Statistics")
