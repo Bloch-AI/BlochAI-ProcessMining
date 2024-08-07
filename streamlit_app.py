@@ -1,6 +1,6 @@
 import streamlit as st
 import pandas as pd
-from pm4py.objects.conversion.log import converter as log_converter_factory
+from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.visualization.petrinet import factory as viz_factory
@@ -35,7 +35,7 @@ def main():
 
         df = dataframe_utils.convert_timestamp_columns_in_df(df)
         df = df.sort_values(by='timestamp')
-        log = log_conversion_factory.apply(df, parameters={
+        log = log_converter.apply(df, parameters={
             "case_id_key": "case_id",
             "activity_key": "activity",
             "timestamp_key": "timestamp"
@@ -44,14 +44,14 @@ def main():
         # Process Mining and Visualization
         net, initial_marking, final_marking = inductive_miner.apply(log)
         gviz = viz_factory.apply(net, initial_marking, final_marking, parameters={"format": "svg"})
-        st.graphviz_chart(gviz)  
+        st.graphviz_chart(gviz)
 
         # Summary Statistics
         st.subheader("Summary Statistics")
         st.write("Number of cases:", len(case_statistics.get_all_casestypes(log)))
         st.write("Number of events:", len(log))
-        
-        # Top 5 Frequent Activities 
+
+        # Top 5 Frequent Activities
         top_activities = df['activity'].value_counts().head(5)  # Limit to top 5
         st.write("Top 5 Frequent Activities:")
         st.bar_chart(top_activities)
