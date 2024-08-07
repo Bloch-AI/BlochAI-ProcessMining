@@ -111,7 +111,7 @@ def main():
         # Summary Statistics
         st.subheader("Summary Statistics")
         try:
-            num_cases = len(case_statistics.get_all_casestypes(log))
+            num_cases = len(log)
             st.write("Number of cases:", num_cases)
         except Exception as e:
             st.error(f"Error getting number of cases: {e}")
@@ -123,9 +123,13 @@ def main():
             st.error(f"Error getting number of events: {e}")
 
         # Top 5 Frequent Activities
-        top_activities = df['concept:name'].value_counts().head(5)  # Limit to top 5
-        st.write("Top 5 Frequent Activities:")
-        st.bar_chart(top_activities)
+        try:
+            top_activities = df['concept:name'].value_counts().head(5).reset_index()
+            top_activities.columns = ['activity', 'count']
+            st.write("Top 5 Frequent Activities:")
+            st.bar_chart(top_activities.set_index('activity'))
+        except Exception as e:
+            st.error(f"Error generating top activities chart: {e}")
 
 if __name__ == "__main__":
     main()
