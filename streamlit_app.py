@@ -30,9 +30,16 @@ def main():
             st.error(f"Missing columns: {', '.join(missing_columns)}")
             return
 
+        # Rename columns to match pm4py expectations
+        df.rename(columns={
+            'case_id': 'case:concept:name',
+            'activity': 'concept:name',
+            'timestamp': 'time:timestamp'
+        }, inplace=True)
+
         # Data Preparation (with error handling for date parsing)
         try:
-            df['timestamp'] = pd.to_datetime(df['timestamp'])
+            df['time:timestamp'] = pd.to_datetime(df['time:timestamp'])
         except pd.errors.OutOfBoundsDatetime:
             st.error("Timestamp values are out of bounds. Check the format (e.g., YYYY-MM-DD HH:MM:SS).")
             return
@@ -41,18 +48,14 @@ def main():
             return
 
         df = dataframe_utils.convert_timestamp_columns_in_df(df)
-        df = df.sort_values(by='timestamp')
+        df = df.sort_values(by='time:timestamp')
 
         # Debugging step: Display the first few rows after preparation
         st.subheader("Data Preview After Preparation")
         st.write(df.head())
 
         try:
-            log = log_converter.apply(df, parameters={
-                "case_id_key": "case_id",
-                "activity_key": "activity",
-                "timestamp_key": "timestamp"
-            })
+            log = log_converter.apply(df)
         except KeyError as e:
             st.error(f"KeyError during log conversion: {e}")
             return
@@ -92,7 +95,7 @@ def main():
         st.write("Number of events:", len(log))
 
         # Top 5 Frequent Activities
-        top_activities = df['activity'].value_counts().head(5)  # Limit to top 5
+        top_activities = df['concept:name'].value_counts().head(5)  # Limit to top 5
         st.write("Top 5 Frequent Activities:")
         st.bar_chart(top_activities)
 
