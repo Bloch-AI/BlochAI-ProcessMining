@@ -93,17 +93,25 @@ def main():
         # Draw the graph
         fig, ax = plt.subplots(figsize=(12, 8))
         pos = nx.spring_layout(G)
-        nx.draw(G, pos, with_labels=True, node_size=5000, node_color='skyblue', font_size=10, font_weight='bold', ax=ax)
         node_shapes = nx.get_node_attributes(G, 'shape')
         node_labels = nx.get_node_attributes(G, 'label')
+        
+        nx.draw(G, pos, with_labels=False, node_size=5000, node_color='skyblue', ax=ax)
+        nx.draw_networkx_labels(G, pos, labels={n: n for n in node_shapes if node_shapes[n] == 'circle'}, font_size=10)
+        nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10)
         nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'circle'], node_shape='o')
         nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'box'], node_shape='s')
-        nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10, font_weight='bold')
+        
         st.pyplot(fig)
 
         # Summary Statistics
         st.subheader("Summary Statistics")
-        st.write("Number of cases:", len(case_statistics.get_all_casestypes(log)))
+        try:
+            num_cases = len(case_statistics.get_all_casestypes(log))
+            st.write("Number of cases:", num_cases)
+        except Exception as e:
+            st.error(f"Error getting number of cases: {e}")
+
         st.write("Number of events:", len(log))
 
         # Top 5 Frequent Activities
