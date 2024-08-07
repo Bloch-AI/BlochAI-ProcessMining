@@ -2,7 +2,7 @@ import streamlit as st
 import pandas as pd
 from pm4py.objects.conversion.log import converter as log_converter_factory
 from pm4py.objects.log.util import dataframe_utils
-from pm4py.algo.discovery.inductive import factory as inductive_miner
+from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.visualization.petrinet import factory as viz_factory
 from pm4py.statistics.traces.generic.log import case_statistics
 
