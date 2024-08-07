@@ -6,6 +6,7 @@ from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.traces.generic.log import case_statistics
+from pm4py.objects.conversion.process_tree import converter as pt_converter
 
 def main():
     st.title("Process Mining App")
@@ -65,7 +66,8 @@ def main():
 
         # Process Mining and Visualization
         try:
-            net, initial_marking, final_marking = inductive_miner.apply(log)
+            tree = inductive_miner.apply(log)
+            net, initial_marking, final_marking = pt_converter.apply(tree)
         except Exception as e:
             st.error(f"Error during process mining: {e}")
             return
@@ -73,11 +75,18 @@ def main():
         # Create a directed graph
         G = nx.DiGraph()
 
-        # Add nodes and edges to the graph
+        # Add places to the graph
         for place in net.places:
-            G.add_node(place.name)
+            G.add_node(place.name, shape='circle')
+
+        # Add transitions to the graph
         for transition in net.transitions:
-            G.add_node(transition.name)
+            if not transition.label:
+                G.add_node(transition.name, shape='box', label='silent')
+            else:
+                G.add_node(transition.name, shape='box', label=transition.label)
+
+        # Add edges to the graph
         for arc in net.arcs:
             G.add_edge(arc.source.name, arc.target.name)
 
@@ -85,6 +94,11 @@ def main():
         fig, ax = plt.subplots(figsize=(12, 8))
         pos = nx.spring_layout(G)
         nx.draw(G, pos, with_labels=True, node_size=5000, node_color='skyblue', font_size=10, font_weight='bold', ax=ax)
+        node_shapes = nx.get_node_attributes(G, 'shape')
+        node_labels = nx.get_node_attributes(G, 'label')
+        nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'circle'], node_shape='o')
+        nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'box'], node_shape='s')
+        nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10, font_weight='bold')
         st.pyplot(fig)
 
         # Summary Statistics
