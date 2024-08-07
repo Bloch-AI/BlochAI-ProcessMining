@@ -2,6 +2,7 @@ import streamlit as st
 import pandas as pd
 import networkx as nx
 import matplotlib.pyplot as plt
+from matplotlib.patches import Patch
 from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
@@ -99,11 +100,22 @@ def main():
         node_shapes = nx.get_node_attributes(G, 'shape')
         node_labels = nx.get_node_attributes(G, 'label')
 
-        nx.draw(G, pos, with_labels=False, node_size=5000, node_color='skyblue', ax=ax, edge_color='gray', linewidths=0.5, font_size=10)
-        nx.draw_networkx_labels(G, pos, labels={n: n for n in node_shapes if node_shapes[n] == 'circle'}, font_size=12, font_weight='bold')
-        nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_weight='bold')
+        # Draw nodes with custom shapes
+        nx.draw(G, pos, with_labels=False, node_size=5000, node_color='skyblue', ax=ax, edge_color='gray', linewidths=0.5)
+        nx.draw_networkx_labels(G, pos, labels={n: n for n in node_shapes if node_shapes[n] == 'circle'}, font_size=12, font_color='white', font_weight='bold')
+        nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='white', font_weight='bold')
         nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'circle'], node_shape='o')
         nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'box'], node_shape='s')
+
+        # Draw text labels to the side of the nodes
+        for key, value in pos.items():
+            x, y = value[0], value[1]
+            ax.text(x, y, s=key, bbox=dict(facecolor='skyblue', alpha=0.5), horizontalalignment='left')
+
+        # Add legend
+        legend_elements = [Patch(facecolor='skyblue', edgecolor='k', label='Place (circle)'),
+                           Patch(facecolor='skyblue', edgecolor='k', label='Transition (square)')]
+        ax.legend(handles=legend_elements, loc='upper left')
 
         st.pyplot(fig)
 
