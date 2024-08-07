@@ -5,10 +5,8 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.objects.log.util import dataframe_utils
-from pm4py.algo.discovery.inductive   
- import algorithm as inductive_miner
-from pm4py.objects.conversion.process_tree import converter   
- as pt_converter
+from pm4py.algo.discovery.inductive import algorithm as inductive_miner
+from pm4py.objects.conversion.process_tree import converter as pt_converter
 from pm4py.objects.log.obj import EventLog
 import io
 
