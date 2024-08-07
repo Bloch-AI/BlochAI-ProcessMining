@@ -1,7 +1,7 @@
 import streamlit as st
 import pandas as pd
-import pm4py
 from pm4py.objects.conversion.log import factory as log_conversion_factory
+from pm4py.objects.log.util import dataframe_utils
 from pm4py.algo.discovery.inductive import factory as inductive_miner
 from pm4py.visualization.petrinet import factory as viz_factory
 from pm4py.statistics.traces.generic.log import case_statistics
@@ -24,17 +24,17 @@ def main():
             st.error("The CSV file must contain 'case_id', 'activity', and 'timestamp' columns.")
             return
 
-        # Convert the dataframe to a pm4py log
+        # Convert the dataframe to a pm4py event log
         df['timestamp'] = pd.to_datetime(df['timestamp'])
+        df = dataframe_utils.convert_timestamp_columns_in_df(df)
         df = df.sort_values(by='timestamp')  # Ensure the dataframe is sorted by timestamp
-        log = pm4py.format_dataframe(df, case_id='case_id', activity_key='activity', timestamp_key='timestamp')
-        log = log_conversion_factory.apply(log)
+        log = log_conversion_factory.apply(df, parameters={"case_id_key": "case_id", "activity_key": "activity", "timestamp_key": "timestamp"})
 
         # Apply the inductive miner
         net, initial_marking, final_marking = inductive_miner.apply(log)
 
         # Visualize the process model
-        gviz = viz_factory.apply(net, initial_marking, final_marking)
+        gviz = viz_factory.apply(net, initial_marking, final_marking, parameters={"format": "svg"})
         st.graphviz_chart(gviz.source)
 
         st.subheader("Summary Statistics")
