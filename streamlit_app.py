@@ -5,12 +5,14 @@ import matplotlib.pyplot as plt
 from matplotlib.patches import Patch
 from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.objects.log.util import dataframe_utils
-from pm4py.algo.discovery.inductive import algorithm as inductive_miner
-from pm4py.objects.conversion.process_tree import converter as pt_converter
+from pm4py.algo.discovery.inductive   
+ import algorithm as inductive_miner
+from pm4py.objects.conversion.process_tree import converter   
+ as pt_converter
 from pm4py.objects.log.obj import EventLog
 import io
 
-# Default CSV content
+# Default CSV content (if no file uploaded)
 default_csv = """
 case_id,activity,timestamp
 1,Start,2022-01-01 00:00:00
@@ -30,55 +32,46 @@ case_id,activity,timestamp
 def main():
     st.title("Process Mining App")
 
-    st.sidebar.header("Upload your CSV file")
+    # File Upload with Error Handling
     uploaded_file = st.sidebar.file_uploader("Choose a file", type=["csv"])
-
-    # Load default CSV if no file is uploaded
-    if uploaded_file is not None:
-        df = pd.read_csv(uploaded_file, encoding='utf-8')  # Load user-uploaded file
+    if uploaded_file is None:
+        df = pd.read_csv(io.StringIO(default_csv))
+        st.warning("Using default CSV data.")
     else:
-        df = pd.read_csv(io.StringIO(default_csv))  # Load default CSV content
+        try:
+            df = pd.read_csv(uploaded_file, encoding='utf-8')
+        except Exception as e:
+            st.error(f"Error reading CSV: {e}")
+            return
 
-    # Display the data preview
-    st.subheader("Data Preview")
-    st.write(df.head())
-
-    # Ensure the column names are consistent
-    df.columns = [col.lower().strip() for col in df.columns]
-
-    # Column Checks
+    # Data Cleaning & Preparation
+    df.columns = df.columns.str.lower().str.strip() 
     required_columns = {'case_id', 'activity', 'timestamp'}
     missing_columns = required_columns - set(df.columns)
     if missing_columns:
         st.error(f"Missing columns: {', '.join(missing_columns)}")
-        return
+        return 
 
-    # Rename columns to match pm4py expectations
-    df.rename(columns={
+    df = df.rename(columns={
         'case_id': 'case:concept:name',
         'activity': 'concept:name',
         'timestamp': 'time:timestamp'
-    }, inplace=True)
+    })
 
-    # Data Preparation
     try:
-        df['time:timestamp'] = pd.to_datetime(df['time:timestamp'])  # Convert timestamps
-    except pd.errors.OutOfBoundsDatetime:
-        st.error("Timestamp values are out of bounds. Check the format (e.g., YYYY-MM-DD HH:MM:SS).")
-        return
-    except Exception as e:
-        st.error(f"Error parsing timestamps: {e}")
+        df['time:timestamp'] = pd.to_datetime(df['time:timestamp'])
+        df = dataframe_utils.convert_timestamp_columns_in_df(df)
+        df = df.sort_values(by='time:timestamp')
+    except Exception as e: 
+        st.error(f"Error preparing data: {e}")
         return
 
-    df = dataframe_utils.convert_timestamp_columns_in_df(df)  # Convert timestamp columns
-    df = df.sort_values(by='time:timestamp')  # Sort by timestamp
-
-    # Display the data after preparation
-    st.subheader("Data Preview After Preparation")
+    # Data Preview
+    st.subheader("Data Preview")
     st.write(df.head())
 
     try:
-        log = log_converter.apply(df)  # Convert dataframe to event log
+        log = log_converter.apply(df)
         if not isinstance(log, EventLog):
             st.error("The converted log is not an EventLog object.")
             return
@@ -91,8 +84,8 @@ def main():
 
     # Process Mining and Visualization
     try:
-        tree = inductive_miner.apply(log)  # Discover process model
-        net, initial_marking, final_marking = pt_converter.apply(tree)  # Convert to Petri net
+        tree = inductive_miner.apply(log)
+        net, initial_marking, final_marking = pt_converter.apply(tree)
     except Exception as e:
         st.error(f"Error during process mining: {e}")
         return
@@ -117,7 +110,7 @@ def main():
 
     # Draw the graph with improved spacing
     fig, ax = plt.subplots(figsize=(14, 10))
-    pos = nx.spring_layout(G, k=0.5, iterations=100)  # Adjusted spring layout parameters
+    pos = nx.spring_layout(G, k=0.5, iterations=100) 
     node_shapes = nx.get_node_attributes(G, 'shape')
     node_labels = nx.get_node_attributes(G, 'label')
 
