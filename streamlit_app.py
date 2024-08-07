@@ -20,6 +20,9 @@ def main():
         st.subheader("Data Preview")
         st.write(df.head())
 
+        # Ensure the column names are consistent
+        df.columns = [col.lower().strip() for col in df.columns]
+
         # Column Checks (made more robust)
         required_columns = {'case_id', 'activity', 'timestamp'}
         missing_columns = required_columns - set(df.columns)
@@ -33,17 +36,36 @@ def main():
         except pd.errors.OutOfBoundsDatetime:
             st.error("Timestamp values are out of bounds. Check the format (e.g., YYYY-MM-DD HH:MM:SS).")
             return
+        except Exception as e:
+            st.error(f"Error parsing timestamps: {e}")
+            return
 
         df = dataframe_utils.convert_timestamp_columns_in_df(df)
         df = df.sort_values(by='timestamp')
-        log = log_converter.apply(df, parameters={
-            "case_id_key": "case_id",
-            "activity_key": "activity",
-            "timestamp_key": "timestamp"
-        })
+
+        # Debugging step: Display the first few rows after preparation
+        st.subheader("Data Preview After Preparation")
+        st.write(df.head())
+
+        try:
+            log = log_converter.apply(df, parameters={
+                "case_id_key": "case_id",
+                "activity_key": "activity",
+                "timestamp_key": "timestamp"
+            })
+        except KeyError as e:
+            st.error(f"KeyError during log conversion: {e}")
+            return
+        except Exception as e:
+            st.error(f"Unexpected error during log conversion: {e}")
+            return
 
         # Process Mining and Visualization
-        net, initial_marking, final_marking = inductive_miner.apply(log)
+        try:
+            net, initial_marking, final_marking = inductive_miner.apply(log)
+        except Exception as e:
+            st.error(f"Error during process mining: {e}")
+            return
 
         # Create a directed graph
         G = nx.DiGraph()
