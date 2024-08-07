@@ -1,3 +1,4 @@
+import os
 import streamlit as st
 import pandas as pd
 import networkx as nx
@@ -16,6 +17,10 @@ def main():
     uploaded_file = st.sidebar.file_uploader("Choose a file", type=["csv"])
 
     if uploaded_file is not None:
+        # Set Graphviz PATH if necessary
+        graphviz_path = '/usr/bin'  # Update this to the correct path on your system
+        os.environ["PATH"] += os.pathsep + graphviz_path
+
         # Load data with explicit encoding (e.g., 'utf-8')
         df = pd.read_csv(uploaded_file, encoding='utf-8')  # Assuming UTF-8, adjust if needed
 
