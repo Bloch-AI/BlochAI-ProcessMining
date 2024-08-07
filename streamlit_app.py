@@ -151,3 +151,6 @@ def main():
 
 if __name__ == "__main__":
     main()
+
+# Add footer
+st.markdown('<div class="footer"><p>© 2024 Bloch AI LTD - All Rights Reserved. <a href="https://www.bloch.ai" style="color: white;">www.bloch.ai</a></p></div>', unsafe_allow_html=True)
