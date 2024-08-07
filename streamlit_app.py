@@ -6,6 +6,7 @@ from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.traces.generic.log import case_statistics
+from pm4py.visualization.process_tree import visualizer as pt_visualizer
 
 def main():
     st.title("Process Mining App")
@@ -65,29 +66,14 @@ def main():
 
         # Process Mining and Visualization
         try:
-            net, initial_marking, final_marking = inductive_miner.apply(log)
+            tree = inductive_miner.apply(log)
         except Exception as e:
             st.error(f"Error during process mining: {e}")
             return
 
-        # Create a directed graph
-        G = nx.DiGraph()
-
-        # Add nodes to the graph
-        for node in net.places:
-            G.add_node(node.name)
-        for node in net.transitions:
-            G.add_node(node.name)
-
-        # Add edges to the graph
-        for edge in net.arcs:
-            G.add_edge(edge.source.name, edge.target.name)
-
-        # Draw the graph
-        fig, ax = plt.subplots()
-        pos = nx.spring_layout(G)
-        nx.draw(G, pos, with_labels=True, ax=ax)
-        st.pyplot(fig)
+        # Visualize Process Tree
+        gviz = pt_visualizer.apply(tree)
+        pt_visualizer.view(gviz)
 
         # Summary Statistics
         st.subheader("Summary Statistics")
