@@ -26,6 +26,8 @@ def main():
 
         # Convert the dataframe to a pm4py log
         df['timestamp'] = pd.to_datetime(df['timestamp'])
+        df = df.sort_values(by='timestamp')  # Ensure the dataframe is sorted by timestamp
+        df = pm4py.format_dataframe(df, case_id='case_id', activity_key='activity', timestamp_key='timestamp')
         log = log_conversion_factory.apply(df)
 
         # Apply the inductive miner
