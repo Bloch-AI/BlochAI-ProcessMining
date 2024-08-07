@@ -127,9 +127,10 @@ def main():
         except Exception as e:
             st.error(f"Error getting number of events: {e}")
 
-        # Top 5 Frequent Activities
+        # Top 5 Frequent Activities (excluding start and end)
         try:
-            top_activities = df['concept:name'].value_counts().head(5).reset_index()
+            top_activities = df['concept:name'].value_counts()
+            top_activities = top_activities[~top_activities.index.isin(['start', 'end'])].head(5).reset_index()
             top_activities.columns = ['activity', 'count']
             st.write("Top 5 Frequent Activities:")
             st.bar_chart(top_activities.set_index('activity'))
