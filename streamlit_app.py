@@ -1,4 +1,3 @@
-import os
 import streamlit as st
 import pandas as pd
 import networkx as nx
@@ -7,8 +6,6 @@ from pm4py.objects.conversion.log import converter as log_converter
 from pm4py.objects.log.util import dataframe_utils
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.traces.generic.log import case_statistics
-from pm4py.visualization.process_tree import visualizer as pt_visualizer
-import tempfile
 
 def main():
     st.title("Process Mining App")
@@ -17,10 +14,6 @@ def main():
     uploaded_file = st.sidebar.file_uploader("Choose a file", type=["csv"])
 
     if uploaded_file is not None:
-        # Set Graphviz PATH if necessary
-        graphviz_path = '/usr/bin'  # Update this to the correct path on your system if needed
-        os.environ["PATH"] += os.pathsep + graphviz_path
-
         # Load data with explicit encoding (e.g., 'utf-8')
         df = pd.read_csv(uploaded_file, encoding='utf-8')  # Assuming UTF-8, adjust if needed
 
@@ -72,20 +65,27 @@ def main():
 
         # Process Mining and Visualization
         try:
-            tree = inductive_miner.apply(log)
+            net, initial_marking, final_marking = inductive_miner.apply(log)
         except Exception as e:
             st.error(f"Error during process mining: {e}")
             return
 
-        # Visualize Process Tree within Streamlit
-        try:
-            gviz = pt_visualizer.apply(tree)
-            with tempfile.NamedTemporaryFile(delete=False, suffix='.svg') as f:
-                pt_visualizer.save(gviz, f.name)
-                st.image(f.name)
-        except Exception as e:
-            st.error(f"Error during process tree visualization: {e}")
-            return
+        # Create a directed graph
+        G = nx.DiGraph()
+
+        # Add nodes and edges to the graph
+        for place in net.places:
+            G.add_node(place.name)
+        for transition in net.transitions:
+            G.add_node(transition.name)
+        for arc in net.arcs:
+            G.add_edge(arc.source.name, arc.target.name)
+
+        # Draw the graph
+        fig, ax = plt.subplots(figsize=(12, 8))
+        pos = nx.spring_layout(G)
+        nx.draw(G, pos, with_labels=True, node_size=5000, node_color='skyblue', font_size=10, font_weight='bold', ax=ax)
+        st.pyplot(fig)
 
         # Summary Statistics
         st.subheader("Summary Statistics")
