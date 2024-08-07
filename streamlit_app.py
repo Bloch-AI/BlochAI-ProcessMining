@@ -1,10 +1,10 @@
 import streamlit as st
 import pandas as pd
 import pm4py
-from pm4py.objects.log.importer.xes import factory as xes_importer
 from pm4py.algo.discovery.inductive import factory as inductive_miner
 from pm4py.visualization.petrinet import factory as viz_factory
 from pm4py.statistics.traces.generic.log import case_statistics
+from pm4py.objects.conversion.log import factory as log_conversion_factory
 
 def main():
     st.title("Process Mining App")
@@ -25,7 +25,8 @@ def main():
             return
 
         # Convert the dataframe to a pm4py log
-        log = pm4py.format_dataframe(df, case_id='case_id', activity_key='activity', timestamp_key='timestamp')
+        df['timestamp'] = pd.to_datetime(df['timestamp'])
+        log = log_conversion_factory.apply(df)
 
         # Apply the inductive miner
         net, initial_marking, final_marking = inductive_miner.apply(log)
