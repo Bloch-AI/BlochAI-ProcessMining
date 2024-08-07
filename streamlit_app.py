@@ -83,7 +83,7 @@ def main():
         for place in net.places:
             G.add_node(place.name, shape='circle')
 
-        # Add transitions to the graph
+        # Add transitions to the graph with meaningful labels
         for transition in net.transitions:
             if not transition.label:
                 G.add_node(transition.name, shape='box', label='silent')
@@ -102,15 +102,9 @@ def main():
 
         # Draw nodes with custom shapes
         nx.draw(G, pos, with_labels=False, node_size=5000, node_color='skyblue', ax=ax, edge_color='gray', linewidths=0.5)
-        nx.draw_networkx_labels(G, pos, labels={n: n for n in node_shapes if node_shapes[n] == 'circle'}, font_size=12, font_color='white', font_weight='bold')
-        nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=12, font_color='white', font_weight='bold')
+        nx.draw_networkx_labels(G, pos, labels={n: n if node_shapes[n] == 'circle' else node_labels[n] for n in G.nodes}, font_size=12, font_color='white', font_weight='bold')
         nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'circle'], node_shape='o')
         nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'box'], node_shape='s')
-
-        # Draw text labels to the side of the nodes
-        for key, value in pos.items():
-            x, y = value[0], value[1]
-            ax.text(x + 0.02, y, s=key, bbox=dict(facecolor='skyblue', alpha=0.5), horizontalalignment='left', fontsize=12, color='black')
 
         # Add legend with clear symbols
         legend_elements = [Patch(facecolor='skyblue', edgecolor='k', label='Place (circle)'),
