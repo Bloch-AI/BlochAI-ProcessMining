@@ -7,6 +7,7 @@ from pm4py.objects.log.util import dataframe_utils
 from pm4py.algo.discovery.inductive import algorithm as inductive_miner
 from pm4py.statistics.traces.generic.log import case_statistics
 from pm4py.objects.conversion.process_tree import converter as pt_converter
+from pm4py.objects.log.obj import EventLog
 
 def main():
     st.title("Process Mining App")
@@ -57,6 +58,9 @@ def main():
 
         try:
             log = log_converter.apply(df)
+            if not isinstance(log, EventLog):
+                st.error("The converted log is not an EventLog object.")
+                return
         except KeyError as e:
             st.error(f"KeyError during log conversion: {e}")
             return
@@ -95,13 +99,13 @@ def main():
         pos = nx.spring_layout(G)
         node_shapes = nx.get_node_attributes(G, 'shape')
         node_labels = nx.get_node_attributes(G, 'label')
-        
+
         nx.draw(G, pos, with_labels=False, node_size=5000, node_color='skyblue', ax=ax)
         nx.draw_networkx_labels(G, pos, labels={n: n for n in node_shapes if node_shapes[n] == 'circle'}, font_size=10)
         nx.draw_networkx_labels(G, pos, labels=node_labels, font_size=10)
         nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'circle'], node_shape='o')
         nx.draw_networkx_nodes(G, pos, nodelist=[n for n in node_shapes if node_shapes[n] == 'box'], node_shape='s')
-        
+
         st.pyplot(fig)
 
         # Summary Statistics
@@ -112,7 +116,11 @@ def main():
         except Exception as e:
             st.error(f"Error getting number of cases: {e}")
 
-        st.write("Number of events:", len(log))
+        try:
+            num_events = sum([len(trace) for trace in log])
+            st.write("Number of events:", num_events)
+        except Exception as e:
+            st.error(f"Error getting number of events: {e}")
 
         # Top 5 Frequent Activities
         top_activities = df['concept:name'].value_counts().head(5)  # Limit to top 5
