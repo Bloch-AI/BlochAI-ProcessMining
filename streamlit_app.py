@@ -1,8 +1,9 @@
 #**********************************************
 # Process Mining Demo App
-# Version 1.1 - Error Handling Update
-# 1st September 2024
+# Version 1.2
+# 5th September 2024
 # Jamie Crossman-Smith
+# jamie@bloch.ai
 #**********************************************
 # This Python code creates a web-based application using Streamlit to demonstrate
 # process mining techniques. The application allows users to upload their own CSV
@@ -95,7 +96,7 @@ def create_info_box(content: str, title: Optional[str] = None) -> str:
     return box_html
 
 # Helper function for creating visualisations
-def create_dfg_visualization(g: nx.DiGraph, start_nodes: List[str], end_nodes: List[str]) -> plt.Figure:
+def create_dfg_visualisation(g: nx.DiGraph, start_nodes: List[str], end_nodes: List[str]) -> plt.Figure:
     fig, ax = plt.subplots(figsize=(14, 10))
     pos = nx.spring_layout(g, seed=42)
     
