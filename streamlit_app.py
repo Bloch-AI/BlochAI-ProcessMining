@@ -187,10 +187,11 @@ def main():
         invalid_timestamps = df['timestamp'].isnull().sum()
         if invalid_timestamps > 0:
             warning_msg = f"There are {invalid_timestamps} invalid values in the 'timestamp' column. These rows will be skipped."
-            st.warning(warning_msg)
             logging.error(warning_msg)
             invalid_timestamps_df = df[df['timestamp'].isnull()]
-            st.subheader("Data Error: Invalid DateTime Data")
+            #st.subheader("Data Error: Invalid DateTime Data")
+            st.markdown("<h3 style='color: red;'>Data Error: Invalid DateTime Data</h3>", unsafe_allow_html=True)
+            st.warning(warning_msg)
             st.dataframe(invalid_timestamps_df)
             logging.error(f"Invalid timestamps:\n{invalid_timestamps_df.to_string()}")
             df = df.dropna(subset=['timestamp'])
