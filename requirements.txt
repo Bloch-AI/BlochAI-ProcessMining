@@ -1,0 +1,7 @@
+streamlit
+pandas
+pm4py
+graphviz
+networkx
+matplotlib
+seaborn
