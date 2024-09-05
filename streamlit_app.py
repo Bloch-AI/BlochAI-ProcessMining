@@ -240,7 +240,7 @@ def main():
             "The data is ordered by the datetimestamp before this network diagram is created."
         ), unsafe_allow_html=True)
         
-        fig = create_dfg_visualization(g, start_nodes, end_nodes)
+        fig = create_dfg_visualisation(g, start_nodes, end_nodes)
         st.pyplot(fig)
         
         # Print detailed pathways
