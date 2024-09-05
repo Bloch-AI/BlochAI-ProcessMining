@@ -34,6 +34,7 @@ import logging
 from typing import Dict, List, Tuple, Optional
 import os
 
+#set log path
 log_file_path = os.path.join(os.getcwd(), 'process_mining_errors.log')
 
 # Setup enhanced logging configuration
@@ -159,7 +160,7 @@ def main():
     st.sidebar.markdown("---")
     st.sidebar.markdown(create_info_box(
         "This tool is for educational purposes only. Users are solely responsible for data uploaded; "
-        "no liability is assumed by Bloch AI Limited or its directors in any way for any data uploaded, outputs, or results, which should not be relied upon for decision-making. "
+        "no liability is assumed by Bloch AI or its directors in any way for any data uploaded, outputs, or results, which should not be relied upon for decision-making. "
         "Do not upload actual, proprietary, or sensitive data. By uploading data, you agree to these terms.",
         "Disclaimer"
     ), unsafe_allow_html=True)
@@ -235,8 +236,9 @@ def main():
         # Visualise the process
         st.subheader("2.Discovered Process Pathways")
         st.markdown(create_info_box(
-            "This diagram illustrates the pathways discovered in the process data. "
-            "It shows the flow of activities and the frequency of transitions between them. "
+            "The process mining model has taken the data given to it and has automatically discovered"
+            "all the different permutations of pathways that have occured."
+            "It shows the flow of activities (arrows) and the number of cases that flow between them."
             "The data is ordered by the datetimestamp before this network diagram is created."
         ), unsafe_allow_html=True)
         
@@ -261,6 +263,7 @@ def main():
         st.markdown(create_info_box(
             "This section identifies potential bottlenecks in the process by analysing "
             "the average time spent on each activity, excluding the Start and End activities."
+            "There are many more informative visuals available to help you."
         ), unsafe_allow_html=True)
         
         activity_durations, bottleneck_fig = perform_bottleneck_analysis(df)
