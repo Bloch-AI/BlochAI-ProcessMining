@@ -159,7 +159,7 @@ def main():
     st.sidebar.markdown("---")
     st.sidebar.markdown(create_info_box(
         "This tool is for educational purposes only. Users are solely responsible for data uploaded; "
-        "no liability is assumed in any way for any data uploaded, outputs, or results, which should not be relied upon for decision-making. "
+        "no liability is assumed by Bloch AI Limited or its directors in any way for any data uploaded, outputs, or results, which should not be relied upon for decision-making. "
         "Do not upload actual, proprietary, or sensitive data. By uploading data, you agree to these terms.",
         "Disclaimer"
     ), unsafe_allow_html=True)
@@ -208,7 +208,7 @@ def main():
             logging.error(f"Short or negative durations:\n{short_durations.to_string()}")
         
         # Display data preview
-        st.subheader("Data Preview")
+        st.subheader("1.Data Preview")
         st.dataframe(df.head())
         logging.info(f"Data preview: {df.head().to_string()}")
         
@@ -232,7 +232,7 @@ def main():
         end_nodes = df.groupby('case_id').last()['activity'].unique().tolist()
         
         # Visualize the process
-        st.subheader("Discovered Process Pathways")
+        st.subheader("2.Discovered Process Pathways")
         st.markdown(create_info_box(
             "This diagram illustrates the pathways discovered in the process data. "
             "It shows the flow of activities and the frequency of transitions between them. "
@@ -243,7 +243,7 @@ def main():
         st.pyplot(fig)
         
         # Print detailed pathways
-        st.subheader("Detailed Case Pathways")
+        st.subheader("3.Detailed Case Pathways")
         st.markdown(create_info_box(
             "Below is a detailed list of the pathways for each case in the process. "
             "This allows you to see the exact sequence of activities for each case."
@@ -256,7 +256,7 @@ def main():
             st.write(f"**Case {case_id}:** {pathway}")
         
         # Perform bottleneck analysis
-        st.subheader("Bottleneck Analysis")
+        st.subheader("4.Bottleneck Analysis")
         st.markdown(create_info_box(
             "This section identifies potential bottlenecks in the process by analysing "
             "the average time spent on each activity, excluding the Start and End activities."
@@ -278,7 +278,7 @@ if __name__ == "__main__":
     main()
 
 # After running the app, display the log contents
-st.subheader("Error Log")
+st.subheader("5.Error Log")
 try:
     with open('process_mining_errors.log', 'r') as log_file:
         log_contents = log_file.read()
