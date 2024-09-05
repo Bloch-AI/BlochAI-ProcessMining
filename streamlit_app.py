@@ -38,7 +38,7 @@ log_file_path = os.path.join(os.getcwd(), 'process_mining_errors.log')
 
 # Setup enhanced logging configuration
 logging.basicConfig(filename=log_file_path, 
-                    level=logging.DEBUG,  
+                    level=logging.ERROR,  
                     format='%(asctime)s - %(levelname)s - %(message)s')
 
 # Redirect Streamlit's logger to our file
