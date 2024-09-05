@@ -189,7 +189,6 @@ def main():
             warning_msg = f"There are {invalid_timestamps} invalid values in the 'timestamp' column. These rows will be skipped."
             logging.error(warning_msg)
             invalid_timestamps_df = df[df['timestamp'].isnull()]
-            #st.subheader("Data Error: Invalid DateTime Data")
             st.markdown("<h3 style='color: red;'>Data Error: Invalid DateTime Data</h3>", unsafe_allow_html=True)
             st.warning(warning_msg)
             st.dataframe(invalid_timestamps_df)
@@ -203,9 +202,9 @@ def main():
         short_durations = df[df['duration'] < (1 / 60)]  # Less than 1 minute
         if not short_durations.empty:
             warning_msg = f"Warning: {len(short_durations)} activities have very short or negative durations. Please review your dataset."
-            st.warning(warning_msg)
             logging.error(warning_msg)
-            st.subheader("Data Error: Rows with Short or Negative Durations")
+            st.markdown("<h3 style='color: red;'>Data Error: Rows with Short or Negative Durations</h3>", unsafe_allow_html=True)
+            st.warning(warning_msg)
             st.dataframe(short_durations)
             logging.error(f"Short or negative durations:\n{short_durations.to_string()}")
         
