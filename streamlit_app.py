@@ -146,14 +146,14 @@ def main():
         "the data in such a way that it can be used very effectively in process mining, even tools like excel can do this if needed. "
         "There are several excellent commercial process mining tools that allow you to directly connect and import data from multiple sources such as ERPs. "
         "However, these can be expensive and there are other open-source alternatives available that are particularly suitable if you wish to run process mining as a one off exercise.<br><br>"
-        "<b>This demo application defaults to a pre-loaded invoice payment process data set, but you can try your own dataset if you wish "
+        "<b>This demo application defaults to a pre-loaded invoice payment process data set previewed below, but you can try your own dataset if you wish "
         "by importing it via the sidebar on the left. 👈</b>",
         "What is Process Mining?"
     ), unsafe_allow_html=True)
     
     # File upload section
     st.sidebar.header("File Upload")
-    st.sidebar.markdown("<b>Upload your CSV file to start analysing your process data.</b>", unsafe_allow_html=True)
+    st.sidebar.markdown("<b>Upload your CSV file to start analysing your process data. It must only contain three columns, case_id, activity, timestamp (MM-DD-YYYY HH:MM:SS) </b>", unsafe_allow_html=True)
     uploaded_file = st.sidebar.file_uploader("Upload your CSV file", type=["csv"])
     
     # Disclaimer
@@ -236,9 +236,9 @@ def main():
         # Visualise the process
         st.subheader("2.Discovered Process Pathways")
         st.markdown(create_info_box(
-            "The process mining model has taken the data given to it and has automatically discovered"
-            "all the different permutations of pathways that have occured."
-            "It shows the flow of activities (arrows) and the number of cases that flow between them."
+            "The process mining model has taken the data given to it and has automatically discovered "
+            "all the different permutations of pathways that have occured. "
+            "It shows the flow of activities (arrows) and the number of cases that flow between them. "
             "The data is ordered by the datetimestamp before this network diagram is created."
         ), unsafe_allow_html=True)
         
