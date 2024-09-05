@@ -190,6 +190,7 @@ def main():
             st.warning(warning_msg)
             logging.error(warning_msg)
             invalid_timestamps_df = df[df['timestamp'].isnull()]
+            st.subheader("Data Error: Invalid DateTime Data")
             st.dataframe(invalid_timestamps_df)
             logging.error(f"Invalid timestamps:\n{invalid_timestamps_df.to_string()}")
             df = df.dropna(subset=['timestamp'])
@@ -203,7 +204,7 @@ def main():
             warning_msg = f"Warning: {len(short_durations)} activities have very short or negative durations. Please review your dataset."
             st.warning(warning_msg)
             logging.error(warning_msg)
-            st.subheader("Rows with Short or Negative Durations")
+            st.subheader("Data Error: Rows with Short or Negative Durations")
             st.dataframe(short_durations)
             logging.error(f"Short or negative durations:\n{short_durations.to_string()}")
         
