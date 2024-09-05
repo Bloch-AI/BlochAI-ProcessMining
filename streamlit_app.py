@@ -232,7 +232,7 @@ def main():
         start_nodes = df.groupby('case_id').first()['activity'].unique().tolist()
         end_nodes = df.groupby('case_id').last()['activity'].unique().tolist()
         
-        # Visualize the process
+        # Visualise the process
         st.subheader("2.Discovered Process Pathways")
         st.markdown(create_info_box(
             "This diagram illustrates the pathways discovered in the process data. "
